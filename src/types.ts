@@ -56,3 +56,11 @@ export type RecipeOption = {
   value: string;
   label: string;
 };
+
+export type MealSlot = "breakfast" | "lunch" | "dinner";
+
+export type MealPlanEntry = {
+  date: string;
+  slot: MealSlot;
+  recipe: RecipeSummary;
+};
