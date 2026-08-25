@@ -199,3 +199,50 @@ h1 em, h2 em { color: var(--moss); font-weight: 600; }
   .filter-panel { grid-template-columns: 1fr; margin-bottom: 22px; }
   .filter-panel-actions { grid-column: auto; }
 }
+
+.detail-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 22px; background: rgba(31,35,30,0.56); animation: fade-in 180ms ease-out; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.detail-dialog { position: relative; width: min(980px, 100%); max-height: min(820px, calc(100vh - 44px)); overflow: auto; background: var(--paper); box-shadow: 0 24px 70px rgba(20,22,19,0.26); animation: detail-in 220ms var(--ease-out); }
+@keyframes detail-in { from { opacity: 0; transform: translateY(12px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.detail-close { position: absolute; z-index: 2; top: 16px; right: 16px; display: grid; place-items: center; width: 37px; height: 37px; border: 0; border-radius: 50%; color: var(--ink); background: rgba(251,250,247,0.86); cursor: pointer; transition: transform 160ms var(--ease-out), background 160ms var(--ease-out); }
+.detail-close:hover { background: #fff; transform: rotate(5deg); }
+.detail-state { min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--muted); }
+.detail-state p { margin: 0; }
+.detail-error { color: #b06b43; }
+.detail-content { display: grid; grid-template-columns: minmax(280px, 0.8fr) 1.2fr; }
+.detail-image-wrap { min-height: 520px; background: var(--cream); }
+.detail-image-wrap img { width: 100%; height: 100%; min-height: 520px; object-fit: cover; }
+.detail-copy { padding: 52px 45px 44px; }
+.detail-topline { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.detail-topline .recipe-meta { margin: 0; }
+.detail-copy h2 { max-width: 500px; margin: 13px 0 16px; font-family: var(--serif); font-size: clamp(2.4rem, 4.5vw, 4rem); font-weight: 600; letter-spacing: -0.065em; line-height: 1; }
+.detail-favorite { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 99px; color: #73786c; background: transparent; font-size: 0.7rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.detail-favorite:hover, .detail-favorite.is-favorite { border-color: rgba(176,107,67,0.35); color: #b06b43; background: rgba(176,107,67,0.07); }
+.tag-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.tag-list span { padding: 5px 8px; color: var(--moss); border: 1px solid rgba(103,115,84,0.25); border-radius: 99px; font-size: 0.65rem; }
+.detail-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
+.detail-actions a { display: inline-flex; align-items: center; gap: 6px; color: var(--moss); font-size: 0.73rem; font-weight: 700; }
+.detail-actions a:hover { color: #b06b43; }
+.detail-divider { height: 1px; margin: 26px 0 25px; background: var(--line); }
+.detail-columns { display: grid; grid-template-columns: 0.78fr 1.22fr; gap: 28px; }
+.detail-columns h3 { margin-bottom: 15px; color: #82877b; font-size: 0.68rem; letter-spacing: 0.13em; text-transform: uppercase; }
+.ingredient-list { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+.ingredient-list li { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(32,35,31,0.08); font-size: 0.76rem; }
+.ingredient-list strong { color: #92968c; font-size: 0.7rem; font-weight: 500; text-align: right; }
+.instructions { display: grid; gap: 14px; }
+.instructions p { display: grid; grid-template-columns: 23px 1fr; gap: 8px; margin: 0; color: #656a60; font-size: 0.8rem; line-height: 1.55; }
+.instructions p span { color: #b06b43; font-size: 0.65rem; font-weight: 700; }
+
+@media (max-width: 780px) {
+  .detail-content { grid-template-columns: 1fr; }
+  .detail-image-wrap, .detail-image-wrap img { min-height: 280px; height: 280px; }
+  .detail-copy { padding: 35px 28px 32px; }
+}
+@media (max-width: 480px) {
+  .detail-backdrop { padding: 0; }
+  .detail-dialog { max-height: 100vh; }
+  .detail-image-wrap, .detail-image-wrap img { min-height: 225px; height: 225px; }
+  .detail-copy { padding: 28px 20px 28px; }
+  .detail-copy h2 { font-size: 2.55rem; }
+  .detail-columns { grid-template-columns: 1fr; gap: 28px; }
+}
