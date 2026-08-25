@@ -1,21 +1,24 @@
-import { ArrowRight, ChefHat, Heart, Search } from "lucide-react";
+import { FormEvent, useMemo } from "react";
+import { ChefHat, Heart, LoaderCircle, Search, Sparkles, X } from "lucide-react";
+import RecipeCard from "./components/RecipeCard";
+import { useRecipeSearch } from "./hooks/useRecipeSearch";
 
-const principles = [
-  {
-    label: "Find faster",
-    detail: "Search by the dish you are craving.",
-  },
-  {
-    label: "Cook with confidence",
-    detail: "Every recipe keeps the important details close.",
-  },
-  {
-    label: "Save the good ones",
-    detail: "Keep inspiration ready for your next meal.",
-  },
-];
+const quickSearches = ["Pasta", "Chicken", "Vegetarian", "Dessert"];
 
 export default function App() {
+  const initialQuery = useMemo(() => new URLSearchParams(window.location.search).get("q") ?? "", []);
+  const { query, setQuery, results, status, error, executeSearch } = useRecipeSearch(initialQuery);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void executeSearch();
+  }
+
+  function handleReset() {
+    setQuery("");
+    void executeSearch("");
+  }
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -36,12 +39,19 @@ export default function App() {
             <p className="eyebrow"><span className="eyebrow-line" /> A calmer way to cook</p>
             <h1 id="hero-title">Good food starts <em>here.</em></h1>
             <p className="hero-description">Find recipes that fit the way you want to eat tonight. No endless scrolling, just something worth making.</p>
-            <div className="search-preview" role="search" aria-label="Recipe search preview">
+            <form className="search-form" role="search" onSubmit={handleSubmit}>
               <Search size={19} aria-hidden="true" />
-              <span>Search for a recipe, ingredient, or cuisine...</span>
-              <button type="button" className="search-arrow" aria-label="Start searching"><ArrowRight size={18} /></button>
+              <label className="sr-only" htmlFor="recipe-search">Search recipes</label>
+              <input id="recipe-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search recipe, ingredient, or cuisine..." autoComplete="off" />
+              {query && <button className="clear-search" type="button" onClick={handleReset} aria-label="Clear search"><X size={16} /></button>}
+              <button className="search-submit" type="submit" disabled={status === "loading"}>
+                {status === "loading" ? <LoaderCircle className="spin" size={18} /> : <span>Find recipes</span>}
+              </button>
+            </form>
+            <div className="quick-searches" aria-label="Popular searches">
+              <span>Try</span>
+              {quickSearches.map((item) => <button key={item} type="button" onClick={() => { setQuery(item); void executeSearch(item); }}>{item}</button>)}
             </div>
-            <p className="hint-text">Try “pasta”, “chicken”, or “Mexican”</p>
           </div>
           <div className="hero-art" aria-label="Recipe ingredients illustration" role="img">
             <div className="art-orbit art-orbit-one" />
@@ -49,33 +59,39 @@ export default function App() {
             <div className="ingredient-card ingredient-card-lemon"><span aria-hidden="true">🍋</span><small>bright &amp; fresh</small></div>
             <div className="ingredient-card ingredient-card-herbs"><span aria-hidden="true">🌿</span><small>from the garden</small></div>
             <div className="plate"><span aria-hidden="true">🥗</span></div>
-            <span className="art-spark spark-one">✦</span>
-            <span className="art-spark spark-two">✦</span>
+            <span className="art-spark spark-one">✦</span><span className="art-spark spark-two">✦</span>
           </div>
         </section>
 
-        <section className="principles-section" id="about" aria-labelledby="principles-title">
-          <div className="section-heading">
-            <p className="eyebrow"><span className="eyebrow-line" /> The pantry promise</p>
-            <h2 id="principles-title">Less searching.<br /><em>More savoring.</em></h2>
+        <section className="results-section" id="discover" aria-labelledby="results-title" aria-live="polite">
+          <div className="results-header">
+            <div>
+              <p className="eyebrow"><span className="eyebrow-line" /> Discover something delicious</p>
+              <h2 id="results-title">{status === "success" ? <>Recipes for <em>you.</em></> : <>Start with a <em>craving.</em></>}</h2>
+            </div>
+            {status === "success" && <span className="results-count">{results.length} {results.length === 1 ? "recipe" : "recipes"}</span>}
           </div>
-          <div className="principles-list">
-            {principles.map((principle, index) => (
-              <div className="principle-row" key={principle.label}>
-                <span className="principle-index">0{index + 1}</span>
-                <div><h3>{principle.label}</h3><p>{principle.detail}</p></div>
-                <ArrowRight size={17} aria-hidden="true" />
-              </div>
-            ))}
-          </div>
+
+          {status === "idle" && (
+            <div className="results-placeholder"><Sparkles size={22} /><p>Search above to explore recipes from around the world.</p></div>
+          )}
+          {status === "loading" && (
+            <div className="results-placeholder"><LoaderCircle className="spin" size={24} /><p>Finding something delicious…</p></div>
+          )}
+          {status === "error" && (
+            <div className="results-placeholder state-error"><p>{error}</p><button type="button" className="text-button" onClick={() => void executeSearch()}>Try again</button></div>
+          )}
+          {status === "success" && results.length === 0 && (
+            <div className="results-placeholder"><p>No recipes matched “{query}”. Try a broader search.</p><button type="button" className="text-button" onClick={handleReset}>Clear search</button></div>
+          )}
+          {status === "success" && results.length > 0 && (
+            <div className="recipe-grid">{results.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}</div>
+          )}
         </section>
 
-        <section className="discover-teaser" id="discover" aria-label="Recipe discovery teaser">
-          <div>
-            <p className="eyebrow eyebrow-light"><span className="eyebrow-line" /> Your next favorite</p>
-            <h2>There is always<br /><em>something delicious.</em></h2>
-          </div>
-          <div className="teaser-note"><span className="teaser-number">01</span><p>Search our collection of recipes from around the world.</p></div>
+        <section className="discover-teaser" id="about" aria-label="About Pantry">
+          <div><p className="eyebrow eyebrow-light"><span className="eyebrow-line" /> The pantry promise</p><h2>Less searching.<br /><em>More savoring.</em></h2></div>
+          <div className="teaser-note"><span className="teaser-number">01</span><p>Search our collection of recipes from around the world, then save the ones you want to make again.</p></div>
         </section>
       </main>
 
