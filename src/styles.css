@@ -352,3 +352,9 @@ h1 em, h2 em { color: var(--moss); font-weight: 600; }
   .grocery-summary { margin-top: 19px; justify-content: space-between; }
   .grocery-list { grid-template-columns: 1fr; }
 }
+
+.meal-slot.is-drag-target { background: rgba(163,173,145,0.18); outline: 2px dashed rgba(103,115,84,0.55); outline-offset: -4px; }
+.planned-meal { cursor: grab; }
+.planned-meal.is-dragging { opacity: 0.42; }
+.planned-meal:active { cursor: grabbing; }
+.planned-meal[draggable="true"]:focus-within { outline: 2px solid #b06b43; outline-offset: 2px; }

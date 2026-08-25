@@ -41,6 +41,19 @@ export function planEntryKey(date: string, slot: MealSlot) {
   return `${date}:${slot}`;
 }
 
+export function movePlanEntry(plan: Record<string, MealPlanEntry>, sourceDate: string, sourceSlot: MealSlot, targetDate: string, targetSlot: MealSlot) {
+  const sourceKey = planEntryKey(sourceDate, sourceSlot);
+  const targetKey = planEntryKey(targetDate, targetSlot);
+  const source = plan[sourceKey];
+  if (!source || sourceKey === targetKey) return plan;
+  const target = plan[targetKey];
+  const next = { ...plan };
+  if (target) next[sourceKey] = { ...target, date: sourceDate, slot: sourceSlot };
+  else delete next[sourceKey];
+  next[targetKey] = { ...source, date: targetDate, slot: targetSlot };
+  return next;
+}
+
 export function useMealPlanner() {
   const [plan, setPlan] = useState<Record<string, MealPlanEntry>>(() => readPlan());
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
@@ -54,6 +67,10 @@ export function useMealPlanner() {
 
   const scheduleMeal = useCallback((date: string, slot: MealSlot, recipe: RecipeSummary) => {
     setPlan((current) => ({ ...current, [planEntryKey(date, slot)]: { date, slot, recipe } }));
+  }, []);
+
+  const moveMeal = useCallback((sourceDate: string, sourceSlot: MealSlot, targetDate: string, targetSlot: MealSlot) => {
+    setPlan((current) => movePlanEntry(current, sourceDate, sourceSlot, targetDate, targetSlot));
   }, []);
 
   const removeMeal = useCallback((date: string, slot: MealSlot) => {
@@ -74,6 +91,7 @@ export function useMealPlanner() {
     setWeekStart,
     scheduleMeal,
     removeMeal,
+    moveMeal,
     getMeal,
     goToPreviousWeek: () => setWeekStart((current) => addDays(current, -7)),
     goToNextWeek: () => setWeekStart((current) => addDays(current, 7)),
