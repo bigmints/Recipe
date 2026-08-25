@@ -4,7 +4,7 @@ Pantry is a calm, visual recipe finder for discovering meals without endless scr
 
 ## Features
 
-The app provides free-text recipe search with shareable URL query state, popular-search shortcuts, loading/error/empty states, category and cuisine filters, alphabetical sorting, and responsive result cards. Each result can open a detail dialog with the recipe image, metadata, tags, ingredients, measurements, instructions, video link, and source link. Favorite recipes can be saved from cards or the detail dialog and remain available in the Saved recipes section after a reload through browser local storage. Saved recipes can also be scheduled into a Monday–Sunday meal planner with breakfast, lunch, and dinner slots; the planner supports week navigation, rescheduling by replacing a slot, removal, and persistence in browser local storage.
+The app provides free-text recipe search with shareable URL query state, popular-search shortcuts, loading/error/empty states, category and cuisine filters, alphabetical sorting, and responsive result cards. Each result can open a detail dialog with the recipe image, metadata, tags, ingredients, measurements, instructions, video link, and source link. Favorite recipes can be saved from cards or the detail dialog and remain available in the Saved recipes section after a reload through browser local storage. Saved recipes can also be scheduled into a Monday–Sunday meal planner with breakfast, lunch, and dinner slots; the planner supports week navigation, rescheduling by replacing a slot, removal, drag-and-drop moves between slots, and persistence in browser local storage. The planner automatically aggregates ingredients from scheduled recipes into a checkable shopping list and provides estimated daily calories, protein, carbohydrates, and fat summaries.
 
 The interface is designed mobile-first with semantic headings, labels, visible focus styles, keyboard-friendly controls, Escape-to-close detail dialogs, reduced-motion support, and resilient image and API failure states.
 
@@ -17,7 +17,7 @@ pnpm install
 pnpm dev
 ```
 
-The meal planner stores its schedule locally in the browser and does not require an account or server database. The project does not require an application-specific secret for local development. Recipe data is provided by TheMealDB’s free developer test API. Public production distribution should follow TheMealDB’s supporter and attribution requirements; see the official API guide in the references below.
+The meal planner, checked grocery items, and schedule are stored locally in the browser and do not require an account or server database. The project does not require an application-specific secret for local development. Recipe data is provided by TheMealDB’s free developer test API. Public production distribution should follow TheMealDB’s supporter and attribution requirements; see the official API guide in the references below.
 
 ## Quality scripts
 
@@ -34,7 +34,7 @@ The meal planner stores its schedule locally in the browser and does not require
 
 The app uses TheMealDB V1 JSON endpoints for meal-name search, category and area filters, category/area option lists, and full meal lookup by ID. The normalized internal model keeps API-specific field names out of the UI and safely ignores empty ingredient slots. TheMealDB documents the API as free for development and educational use with test key `1`; public app-store distribution may require a supporter key and attribution.[1]
 
-The API is accessed directly from the browser, so the app depends on the data source being reachable and may be affected by service availability or rate limits. Filters are limited to fields reliably returned by the API. When a text query and category/cuisine filter are combined, the text search is retrieved first and the category/cuisine match is applied locally because the free V1 endpoints expose those operations separately.
+The API is accessed directly from the browser, so the app depends on the data source being reachable and may be affected by service availability or rate limits. TheMealDB does not provide nutrition fields in the recipe payload used here, so the nutrition panel is explicitly labeled as an estimate based on ingredient-name matching; it is not a dietary, medical, or label-accurate calculation. Filters are limited to fields reliably returned by the API. When a text query and category/cuisine filter are combined, the text search is retrieved first and the category/cuisine match is applied locally because the free V1 endpoints expose those operations separately.
 
 ## Repository and commit history
 
