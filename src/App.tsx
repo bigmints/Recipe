@@ -4,6 +4,7 @@ import RecipeCard from "./components/RecipeCard";
 import RecipeDetail from "./components/RecipeDetail";
 import { getAreas, getCategories, getRecipe, RecipeApiError } from "./api";
 import { useRecipeSearch } from "./hooks/useRecipeSearch";
+import { useFavorites } from "./hooks/useFavorites";
 import type { Recipe, RecipeOption, RecipeSummary } from "./types";
 
 const quickSearches = ["Pasta", "Chicken", "Vegetarian", "Dessert"];
@@ -21,7 +22,7 @@ export default function App() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<Record<string, RecipeSummary>>({});
+  const { favorites, favoriteRecipes, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -50,7 +51,6 @@ export default function App() {
     setSelectedRecipe(null); setDetailError(null); setDetailLoading(true);
     try { setSelectedRecipe(await getRecipe(recipe.id)); } catch (requestError) { setDetailError(requestError instanceof RecipeApiError ? requestError.message : "We could not load that recipe."); } finally { setDetailLoading(false); }
   }
-  function toggleFavorite(recipe: RecipeSummary) { setFavorites((current) => { const next = { ...current }; if (next[recipe.id]) delete next[recipe.id]; else next[recipe.id] = recipe; return next; }); }
 
   return (
     <div className="app-shell">
@@ -62,6 +62,7 @@ export default function App() {
           {filterOpen && <div className="filter-panel" aria-label="Recipe filters"><div className="filter-field"><label htmlFor="category-filter">Category</label><div className="select-wrap"><select id="category-filter" value={filters.category ?? ""} onChange={(event) => updateFilter("category", event.target.value)}><option value="">All categories</option>{categories.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={14} /></div></div><div className="filter-field"><label htmlFor="area-filter">Cuisine</label><div className="select-wrap"><select id="area-filter" value={filters.area ?? ""} onChange={(event) => updateFilter("area", event.target.value)}><option value="">All cuisines</option>{areas.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select><ChevronDown size={14} /></div></div><div className="filter-panel-actions">{optionsError && <span className="filter-hint">Some filter options could not load.</span>}<button className="clear-filters" type="button" onClick={handleReset} disabled={!hasFilters}><X size={14} /> Clear all</button></div></div>}
           {status === "idle" && <div className="results-placeholder"><Sparkles size={22} /><p>Search above to explore recipes from around the world.</p></div>}{status === "loading" && <div className="results-placeholder"><LoaderCircle className="spin" size={24} /><p>Finding something delicious…</p></div>}{status === "error" && <div className="results-placeholder state-error"><p>{error}</p><button type="button" className="text-button" onClick={() => void executeSearch()}>Try again</button></div>}{status === "success" && results.length === 0 && <div className="results-placeholder"><p>No recipes matched{query ? ` “${query}”` : " those filters"}. Try a broader search.</p><button type="button" className="text-button" onClick={handleReset}>Clear search</button></div>}{status === "success" && sortedResults.length > 0 && <div className="recipe-grid">{sortedResults.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} onOpen={openRecipe} isFavorite={Boolean(favorites[recipe.id])} onFavorite={toggleFavorite} />)}</div>}
         </section>
+        <section className="saved-section" id="saved" aria-labelledby="saved-title"><div className="saved-heading"><div><p className="eyebrow"><span className="eyebrow-line" /> Your personal collection</p><h2 id="saved-title">Saved for <em>later.</em></h2></div><span className="results-count">{favoriteRecipes.length} {favoriteRecipes.length === 1 ? "recipe" : "recipes"}</span></div>{favoriteRecipes.length > 0 ? <div className="recipe-grid">{favoriteRecipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} onOpen={openRecipe} isFavorite={Boolean(favorites[recipe.id])} onFavorite={toggleFavorite} />)}</div> : <div className="saved-empty"><Heart size={20} /><p>Save recipes while you browse and they will show up here.</p></div>}</section>
         <section className="discover-teaser" id="about" aria-label="About Pantry"><div><p className="eyebrow eyebrow-light"><span className="eyebrow-line" /> The pantry promise</p><h2>Less searching.<br /><em>More savoring.</em></h2></div><div className="teaser-note"><span className="teaser-number">01</span><p>Search our collection of recipes from around the world, then save the ones you want to make again.</p></div></section>
       </main>
       <footer className="site-footer"><span>© {new Date().getFullYear()} Pantry</span><span>Made for curious cooks</span></footer>
