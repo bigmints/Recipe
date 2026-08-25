@@ -64,3 +64,10 @@ export type MealPlanEntry = {
   slot: MealSlot;
   recipe: RecipeSummary;
 };
+
+export type NutritionTotals = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
