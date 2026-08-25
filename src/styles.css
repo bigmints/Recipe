@@ -387,3 +387,25 @@ h1 em, h2 em { color: var(--moss); font-weight: 600; }
 .nutrition-error { color: #b06b43; }
 @media (max-width: 780px) { .nutrition-section { overflow-x: auto; padding-bottom: 75px; } .nutrition-heading, .nutrition-intro, .nutrition-footnote { min-width: 600px; } }
 @media (max-width: 480px) { .nutrition-heading { align-items: flex-start; } .nutrition-heading, .nutrition-intro, .nutrition-footnote { min-width: 0; } .nutrition-heading { display: block; } .estimate-badge { display: inline-block; margin-top: 17px; } }
+
+.inventory-panel { margin-bottom: 24px; padding: 18px 20px 20px; border: 1px solid rgba(103,115,84,0.2); background: rgba(163,173,145,0.1); }
+.inventory-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 15px; }
+.inventory-heading h3 { margin: 0 0 5px; color: var(--ink); font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+.inventory-heading p { margin: 0; color: #808679; font-size: 0.74rem; line-height: 1.45; }
+.inventory-clear { flex: 0 0 auto; padding: 5px 0; border: 0; border-bottom: 1px solid currentColor; color: var(--moss); background: transparent; font-size: 0.68rem; font-weight: 700; cursor: pointer; }
+.inventory-clear:hover { color: #b06b43; }
+.inventory-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.inventory-item { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border: 1px solid rgba(32,35,31,0.12); border-radius: 99px; color: #687062; background: rgba(251,250,247,0.7); font-size: 0.7rem; cursor: pointer; transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out), color 160ms var(--ease-out); }
+.inventory-item:hover { border-color: rgba(103,115,84,0.45); }
+.inventory-item input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.inventory-checkbox { display: grid; place-items: center; width: 16px; height: 16px; border: 1px solid rgba(103,115,84,0.45); border-radius: 50%; color: transparent; }
+.inventory-item input:focus-visible + .inventory-checkbox { outline: 3px solid #b06b43; outline-offset: 2px; }
+.inventory-item.is-on-hand { border-color: rgba(103,115,84,0.35); color: var(--moss); background: rgba(163,173,145,0.2); }
+.inventory-item.is-on-hand .inventory-checkbox { color: #f8f5ee; background: var(--moss); }
+.inventory-item.is-on-hand > span:last-child { text-decoration: line-through; text-decoration-color: rgba(176,107,67,0.45); }
+.grocery-complete { border-style: solid; border-color: rgba(103,115,84,0.2); color: var(--moss); background: rgba(163,173,145,0.1); }
+@media (max-width: 600px) {
+  .inventory-panel { padding: 16px; }
+  .inventory-heading { display: block; }
+  .inventory-clear { margin-top: 13px; }
+}

@@ -4,7 +4,7 @@ Pantry is a calm, visual recipe finder for discovering meals without endless scr
 
 ## Features
 
-The app provides free-text recipe search with shareable URL query state, popular-search shortcuts, loading/error/empty states, category and cuisine filters, alphabetical sorting, and responsive result cards. Each result can open a detail dialog with the recipe image, metadata, tags, ingredients, measurements, instructions, video link, and source link. Favorite recipes can be saved from cards or the detail dialog and remain available in the Saved recipes section after a reload through browser local storage. Saved recipes can also be scheduled into a Monday–Sunday meal planner with breakfast, lunch, and dinner slots; the planner supports week navigation, rescheduling by replacing a slot, removal, drag-and-drop moves between slots, and persistence in browser local storage. The planner automatically aggregates ingredients from scheduled recipes into a checkable shopping list and provides estimated daily calories, protein, carbohydrates, and fat summaries.
+The app provides free-text recipe search with shareable URL query state, popular-search shortcuts, loading/error/empty states, category and cuisine filters, alphabetical sorting, and responsive result cards. Each result can open a detail dialog with the recipe image, metadata, tags, ingredients, measurements, instructions, video link, and source link. Favorite recipes can be saved from cards or the detail dialog and remain available in the Saved recipes section after a reload through browser local storage. Saved recipes can also be scheduled into a Monday–Sunday meal planner with breakfast, lunch, and dinner slots; the planner supports week navigation, rescheduling by replacing a slot, removal, drag-and-drop moves between slots, and persistence in browser local storage. The planner automatically aggregates ingredients from scheduled recipes into a checkable shopping list and provides estimated daily calories, protein, carbohydrates, and fat summaries. A pantry inventory control lets users mark ingredients already on hand; those items are subtracted from the shopping list while remaining editable in the inventory panel.
 
 The interface is designed mobile-first with semantic headings, labels, visible focus styles, keyboard-friendly controls, Escape-to-close detail dialogs, reduced-motion support, and resilient image and API failure states.
 
@@ -17,7 +17,7 @@ pnpm install
 pnpm dev
 ```
 
-The meal planner, checked grocery items, and schedule are stored locally in the browser and do not require an account or server database. The project does not require an application-specific secret for local development. Recipe data is provided by TheMealDB’s free developer test API. Public production distribution should follow TheMealDB’s supporter and attribution requirements; see the official API guide in the references below.
+The meal planner, checked grocery items, pantry inventory, and schedule are stored locally in the browser and do not require an account or server database. The project does not require an application-specific secret for local development. Recipe data is provided by TheMealDB’s free developer test API. Public production distribution should follow TheMealDB’s supporter and attribution requirements; see the official API guide in the references below.
 
 ## Quality scripts
 
