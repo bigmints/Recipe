@@ -71,3 +71,42 @@ export type NutritionTotals = {
   carbs: number;
   fat: number;
 };
+
+export type UserLocation = {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+};
+
+export type NearbyStore = {
+  id: string;
+  name: string;
+  address: string | null;
+  distanceKm: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  priceCount: number;
+  productCount: number;
+  source: "Open Prices" | "OpenStreetMap";
+};
+
+export type LiveStorePrice = {
+  id: string;
+  ingredientKey: string;
+  ingredientName: string;
+  storeId: string;
+  storeName: string;
+  productName: string | null;
+  price: number;
+  currency: string;
+  observedOn: string | null;
+  source: string;
+};
+
+export type StoreComparison = {
+  store: NearbyStore;
+  prices: LiveStorePrice[];
+  total: number;
+  coveredItems: number;
+  missingItems: number;
+};

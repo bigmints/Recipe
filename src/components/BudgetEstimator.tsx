@@ -3,6 +3,7 @@ import { Calculator, RotateCcw } from "lucide-react";
 import { useBudgetEstimator } from "../hooks/useBudgetEstimator";
 import { defaultIngredientPrice, estimateGroceryCost, formatUsd } from "../lib/budget";
 import type { GroceryItem } from "../lib/grocery";
+import StorePriceComparison from "./StorePriceComparison";
 
 type BudgetEstimatorProps = { items: GroceryItem[] };
 
@@ -21,5 +22,6 @@ export default function BudgetEstimator({ items }: BudgetEstimatorProps) {
     {items.length === 0 ? <div className="budget-empty">Your pantry covers the current plan, so there is nothing left to price.</div> : <div className="budget-items">{items.map((item) => <label className="budget-item" key={item.key}><span>{item.name}<small>{item.measures.join(" + ") || "To taste"}</small></span><div className="price-input"><span>$</span><input type="number" min="0" step="0.25" aria-label={`Estimated price for ${item.name}`} value={overrides[item.key] ?? defaultIngredientPrice(item.name)} onChange={(event) => updatePrice(item.key, event.target.value)} /></div></label>)}</div>}
     {Object.keys(overrides).length > 0 && <button type="button" className="budget-reset" onClick={resetPrices}><RotateCcw size={13} /> Reset price estimates</button>}
     <p className="budget-note">Estimates represent typical item-level prices and do not account for store, brand, package size, tax, or currency differences.</p>
+    <StorePriceComparison items={items} />
   </section>;
 }
