@@ -4,12 +4,16 @@
 
 ## Product walkthrough
 
+![Pantry product walkthrough](assets/pantry-demo.gif)
+
+The animated walkthrough plays inline from the committed repository asset above. A direct MP4 player is also provided for clients that support HTML5 video:
+
 <video controls muted loop playsinline preload="metadata" poster="https://raw.githubusercontent.com/vincenzo-afk/Recipe/main/assets/pantry-demo-poster.png" width="960">
   <source src="https://github.com/vincenzo-afk/Recipe/raw/refs/heads/main/assets/pantry-demo.mp4" type="video/mp4" />
   Your browser does not support the embedded video. [Open the Pantry walkthrough directly](https://github.com/vincenzo-afk/Recipe/raw/refs/heads/main/assets/pantry-demo.mp4).
 </video>
 
-The walkthrough is produced from the source-controlled [`docs/pantry-demo.html`](docs/pantry-demo.html) file. The committed MP4 is the portable README presentation, while the HTML source remains available for inspection and regeneration with [`scripts/render-demo.sh`](scripts/render-demo.sh).
+The walkthrough is produced from the source-controlled [`docs/pantry-demo.html`](docs/pantry-demo.html) file. The committed GIF is the GitHub-compatible inline presentation, the MP4 is the portable video download, and the HTML source remains available for inspection and regeneration with [`scripts/render-demo.sh`](scripts/render-demo.sh).
 
 ## What Pantry does
 
