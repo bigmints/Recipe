@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pantry — product walkthrough</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8f6ef;
+      --muted: #b8b7ad;
+      --canvas: #101512;
+      --panel: #18211c;
+      --panel-2: #202c25;
+      --line: rgba(248, 246, 239, .14);
+      --accent: #d8ef7c;
+      --accent-2: #9fd486;
+      --warm: #e6b66a;
+      --coral: #df8f76;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      display: grid;
+      place-items: center;
+      background: #0a0e0c;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .stage {
+      position: relative;
+      width: 960px;
+      height: 540px;
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 78% 16%, rgba(216, 239, 124, .12), transparent 26%),
+        linear-gradient(135deg, #101512 0%, #162019 100%);
+    }
+    .stage::after {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      background: linear-gradient(120deg, transparent 0 50%, rgba(255,255,255,.025) 50.2% 50.5%, transparent 50.7% 100%);
+    }
+    .topbar { position: absolute; inset: 25px 34px auto; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+    .wordmark { display: flex; gap: 10px; align-items: center; font-weight: 760; letter-spacing: -.04em; font-size: 21px; }
+    .mark { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 9px; color: #172016; background: var(--accent); font-size: 14px; font-weight: 900; }
+    .nav { display: flex; gap: 24px; color: var(--muted); font-size: 11px; }
+    .nav .active { color: var(--ink); }
+    .scene { position: absolute; inset: 0; padding: 112px 58px 42px; opacity: 0; transform: translateY(18px) scale(.985); }
+    .scene.active { opacity: 1; transform: translateY(0) scale(1); }
+    .kicker { display: flex; align-items: center; gap: 8px; color: var(--accent); text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 800; }
+    .kicker::before { width: 24px; height: 1px; content: ""; background: var(--accent); }
+    h1, h2, p { margin: 0; }
+    h1 { max-width: 460px; margin-top: 14px; font-size: 58px; line-height: .97; letter-spacing: -.065em; }
+    h1 em, h2 em { color: var(--accent); font-style: normal; }
+    h2 { font-size: 31px; line-height: 1; letter-spacing: -.05em; }
+    .lead { max-width: 356px; margin-top: 20px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .search { display: flex; align-items: center; gap: 10px; max-width: 420px; margin-top: 24px; padding: 8px 8px 8px 15px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.045); color: var(--muted); font-size: 12px; }
+    .search b { margin-left: auto; padding: 10px 14px; border-radius: 9px; background: var(--accent); color: #172016; font-size: 11px; }
+    .quick { display: flex; gap: 9px; margin-top: 14px; color: var(--muted); font-size: 10px; }
+    .quick span { padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; }
+    .hero-art { position: absolute; top: 114px; right: 78px; width: 300px; height: 300px; }
+    .orb { position: absolute; inset: 17px; border: 1px solid rgba(216,239,124,.22); border-radius: 50%; transform: rotate(-18deg) skewX(-8deg); }
+    .orb.two { inset: 52px -5px 32px 46px; transform: rotate(39deg) skewX(-12deg); border-color: rgba(230,182,106,.25); }
+    .plate { position: absolute; inset: 69px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 36% 30%, #eef3df 0 8%, #b7ce9b 9% 12%, #59755b 13% 36%, #314c3b 37% 64%, #213328 65%); box-shadow: 0 0 0 14px rgba(216,239,124,.07), 0 26px 60px rgba(0,0,0,.28); font-size: 63px; }
+    .ingredient { position: absolute; z-index: 1; display: flex; flex-direction: column; gap: 5px; padding: 11px; border: 1px solid rgba(255,255,255,.16); border-radius: 12px; background: rgba(24,33,28,.82); box-shadow: 0 16px 36px rgba(0,0,0,.18); font-size: 24px; }
+    .ingredient small { color: var(--muted); font-size: 8px; }
+    .ingredient.lemon { top: 20px; right: 1px; }
+    .ingredient.herb { bottom: 29px; left: 4px; }
+    .stat-row { display: flex; gap: 10px; margin-top: 24px; }
+    .stat { min-width: 105px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255,255,255,.035); }
+    .stat strong { display: block; color: var(--accent); font-size: 17px; }
+    .stat span { color: var(--muted); font-size: 9px; }
+    .toolbar { display: flex; justify-content: space-between; align-items: end; margin-top: 18px; }
+    .count { color: var(--muted); font-size: 11px; }
+    .filters { display: flex; gap: 8px; margin-top: 17px; }
+    .filter { padding: 8px 12px; border: 1px solid var(--line); border-radius: 9px; color: var(--muted); font-size: 10px; }
+    .filter.selected { border-color: rgba(216,239,124,.55); color: var(--accent); }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 17px; }
+    .card { overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.04); }
+    .food { height: 114px; display: grid; place-items: center; background: radial-gradient(circle at 40% 38%, #e7be76 0 9%, #9b5638 10% 16%, transparent 17%), radial-gradient(circle at 62% 56%, #c6da8b 0 12%, #45634a 13% 22%, transparent 23%), linear-gradient(135deg, #d98567, #694335); font-size: 39px; }
+    .food.green { background: radial-gradient(circle at 45% 44%, #d9ec97 0 11%, #52734b 12% 25%, transparent 26%), linear-gradient(135deg, #729d70, #1c3a31); }
+    .food.gold { background: radial-gradient(circle at 45% 45%, #f0c96f 0 12%, #a95f38 13% 28%, transparent 29%), linear-gradient(135deg, #754f3c, #2b2825); }
+    .card-body { padding: 12px; }
+    .card-body b { display: block; font-size: 12px; }
+    .card-body span { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; }
+    .detail-layout { display: grid; grid-template-columns: 42% 1fr; gap: 32px; height: 330px; align-items: center; }
+    .detail-photo { height: 285px; display: grid; place-items: center; border-radius: 20px; background: radial-gradient(circle at 41% 37%, #f0c66e 0 8%, #b56340 9% 16%, transparent 17%), radial-gradient(circle at 62% 55%, #d2e59c 0 15%, #527351 16% 29%, transparent 30%), linear-gradient(135deg, #c27659, #3b4033); box-shadow: 0 24px 58px rgba(0,0,0,.24); font-size: 75px; }
+    .detail-copy { position: relative; }
+    .close { position: absolute; right: 0; top: -6px; color: var(--muted); font-size: 19px; }
+    .detail-copy h2 { max-width: 320px; font-size: 37px; }
+    .detail-copy p { max-width: 310px; margin-top: 14px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .pills { display: flex; gap: 8px; margin-top: 17px; }
+    .pill { padding: 7px 9px; border-radius: 99px; background: rgba(216,239,124,.12); color: var(--accent); font-size: 9px; }
+    .primary { display: inline-block; margin-top: 20px; padding: 11px 15px; border-radius: 10px; background: var(--accent); color: #172016; font-size: 10px; font-weight: 800; }
+    .planner-top { display: flex; align-items: end; justify-content: space-between; }
+    .week { display: flex; gap: 7px; margin-top: 20px; }
+    .day { flex: 1; padding: 10px 7px; border: 1px solid var(--line); border-radius: 10px; text-align: center; color: var(--muted); font-size: 9px; }
+    .day strong { display: block; margin-top: 5px; color: var(--ink); font-size: 14px; }
+    .day.today { border-color: var(--accent); background: rgba(216,239,124,.1); color: var(--accent); }
+    .planner-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-top: 18px; }
+    .planner-panel { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.035); }
+    .panel-head { display: flex; justify-content: space-between; color: var(--muted); font-size: 10px; }
+    .meal { display: grid; grid-template-columns: 70px 1fr auto; gap: 10px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .meal-thumb { width: 70px; height: 45px; display: grid; place-items: center; border-radius: 9px; background: linear-gradient(135deg, #759d6a, #c78751); font-size: 22px; }
+    .meal b { display: block; font-size: 10px; }
+    .meal span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; }
+    .check { color: var(--accent); font-size: 13px; }
+    .shop-item { display: flex; gap: 8px; align-items: center; margin-top: 13px; color: var(--muted); font-size: 10px; }
+    .box { width: 13px; height: 13px; border: 1px solid var(--accent); border-radius: 4px; }
+    .box.done { display: grid; place-items: center; background: var(--accent); color: #172016; font-size: 9px; }
+    .price { margin-left: auto; color: var(--ink); }
+    .footer-note { position: absolute; left: 58px; bottom: 24px; color: rgba(248,246,239,.4); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+    .progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 25%; background: var(--accent); }
+    .scene[data-scene="0"] .progress { width: 25%; }
+    .scene[data-scene="1"] .progress { width: 50%; }
+    .scene[data-scene="2"] .progress { width: 75%; }
+    .scene[data-scene="3"] .progress { width: 100%; }
+    .hint { position: absolute; right: 34px; bottom: 24px; color: rgba(248,246,239,.4); font-size: 9px; }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="Pantry product walkthrough">
+    <div class="topbar">
+      <div class="wordmark"><span class="mark">P</span> pantry</div>
+      <div class="nav"><span class="active">Discover</span><span>Planner</span><span>Saved recipes</span></div>
+    </div>
+
+    <section class="scene" data-scene="0">
+      <div class="kicker">A calmer way to cook</div>
+      <h1>Good food starts <em>here.</em></h1>
+      <p class="lead">Find recipes that fit the way you want to eat tonight. No endless scrolling, just something worth making.</p>
+      <div class="search"><span>⌕</span><span>Pasta</span><b>Find recipes</b></div>
+      <div class="quick"><span>Chicken</span><span>Vegetarian</span><span>Dessert</span></div>
+      <div class="hero-art"><div class="orb"></div><div class="orb two"></div><div class="plate">◒</div><div class="ingredient lemon">◐<small>bright &amp; fresh</small></div><div class="ingredient herb">✦<small>from the garden</small></div></div>
+      <div class="footer-note">01 / discover</div><div class="hint">Pantry · recipe finder</div>
+    </section>
+
+    <section class="scene" data-scene="1">
+      <div class="kicker">Discover something delicious</div>
+      <div class="toolbar"><h2>Recipes for <em>you.</em></h2><span class="count">24 recipes</span></div>
+      <div class="filters"><span class="filter selected">All recipes</span><span class="filter">Category</span><span class="filter">Cuisine</span><span class="filter">A to Z</span></div>
+      <div class="cards"><article class="card"><div class="food">◒</div><div class="card-body"><b>One-pan pasta</b><span>Italian · 35 min</span></div></article><article class="card"><div class="food green">✦</div><div class="card-body"><b>Garden bowl</b><span>Vegetarian · 20 min</span></div></article><article class="card"><div class="food gold">◐</div><div class="card-body"><b>Golden curry</b><span>Indian · 45 min</span></div></article></div>
+      <div class="stat-row"><div class="stat"><strong>Fast</strong><span>smart search</span></div><div class="stat"><strong>Local</strong><span>saved in browser</span></div><div class="stat"><strong>Clear</strong><span>calm filters</span></div></div>
+      <div class="footer-note">02 / refine</div><div class="hint">Search · filter · sort</div>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <div class="kicker">Your personal collection</div>
+      <div class="detail-layout"><div class="detail-photo">◒</div><div class="detail-copy"><span class="close">×</span><h2>Save what you want to make <em>again.</em></h2><p>Open a recipe for ingredients, measurements, instructions, nutrition estimates, and source links — then keep it close in Saved recipes.</p><div class="pills"><span class="pill">30 min</span><span class="pill">4 servings</span><span class="pill">Italian</span></div><span class="primary">♡ Save recipe</span></div></div>
+      <div class="footer-note">03 / save</div><div class="hint">Details · favorites · local storage</div>
+    </section>
+
+    <section class="scene" data-scene="3">
+      <div class="kicker">Plan the week ahead</div>
+      <div class="planner-top"><h2>Make space for <em>good food.</em></h2><span class="count">Monday, 12 May</span></div>
+      <div class="week"><div class="day today">MON<strong>12</strong></div><div class="day">TUE<strong>13</strong></div><div class="day">WED<strong>14</strong></div><div class="day">THU<strong>15</strong></div><div class="day">FRI<strong>16</strong></div><div class="day">SAT<strong>17</strong></div><div class="day">SUN<strong>18</strong></div></div>
+      <div class="planner-grid"><div class="planner-panel"><div class="panel-head"><span>Today’s meals</span><span>3 slots</span></div><div class="meal"><div class="meal-thumb">◒</div><div><b>One-pan pasta</b><span>Dinner · 35 min</span></div><div class="check">✓</div></div><div class="meal"><div class="meal-thumb">✦</div><div><b>Garden bowl</b><span>Lunch · 20 min</span></div><div class="check">✓</div></div></div><div class="planner-panel"><div class="panel-head"><span>Shopping list</span><span class="count">$18.40 est.</span></div><div class="shop-item"><span class="box done">✓</span>Tomatoes<span class="price">$3.20</span></div><div class="shop-item"><span class="box"></span>Spinach<span class="price">$2.80</span></div><div class="shop-item"><span class="box"></span>Parmesan<span class="price">$4.10</span></div></div></div>
+      <div class="footer-note">04 / plan</div><div class="hint">Planner · pantry · shopping list</div>
+    </section>
+    <div class="progress"></div>
+  </main>
+  <script>
+    const scene = Number(new URLSearchParams(location.search).get('scene') || '0');
+    document.querySelectorAll('.scene').forEach((element, index) => {
+      element.classList.toggle('active', index === scene);
+    });
+  </script>
+</body>
+</html>

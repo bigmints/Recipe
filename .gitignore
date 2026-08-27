@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.demo-frames/
 .env
 .env.*
 !.env.example
