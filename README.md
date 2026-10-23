@@ -31,6 +31,8 @@ Pantry turns recipe discovery into a focused flow: search by recipe, ingredient,
 
 ## Local development
 
+[![Launch on PicoRunner](https://picorunner.com/badges/launch.svg)](https://picorunner.com/launch/?repository=https%3A%2F%2Fgithub.com%2Fvincenzo-afk%2FRecipe)
+
 The project is a Vite-powered React and TypeScript application. It does not require an account, application-specific secret, server database, or backend service for local development.
 
 ```bash
